@@ -25,14 +25,14 @@ const createRecord = asynchandler(async (req, res) => {
 });
 
 const updateRecord = asynchandler(async (req, res) => {
-    const { id } = req.params
-    const updateData = req.body
+    const { id } = req.params; // get id from url
+    const updateData = req.body;
 
     if (!id) {
         throw new ApiError(400, "record_id is required");
     }
 
-    const record = await FinancialRecord.findByIdAndUpdate(
+    const record = await Financial.findByIdAndUpdate(
         id,
         { $set: updateData },
         { new: true, runValidators: true }
@@ -54,7 +54,7 @@ const deleteRecords = asynchandler(async (req, res) => {
         throw new ApiError(400, "record id is not found");
     }
 
-    const record = await FinancialRecord.findByIdAndDelete(id);
+    const record = await Financial.findByIdAndDelete(id);
 
     if (!record) {
         throw new ApiError(404, "records are not found");
@@ -81,13 +81,13 @@ const getRecord = asynchandler(async (req, res) => {
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const records = await FinancialRecord.find(matchStage)
+    const records = await Financial.find(matchStage)
         .sort({ date: -1 })
         .skip(skip)
         .limit(parseInt(limit))
         .populate('createdBy', 'username fullName email');
 
-    const totalRecords = await FinancialRecord.countDocuments(matchStage);
+    const totalRecords = await Financial.countDocuments(matchStage);
 
     return res.status(200).json(
         new ApiResponse(200, {

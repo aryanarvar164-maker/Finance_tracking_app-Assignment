@@ -3,6 +3,7 @@ import { ApiResponse } from '../utils/apiResponse.js';
 import { Financial } from '../models/Financial.models.js';
 
 const getDashboardstats = asynchandler(async (req, res) => {
+    // calculate income, expense
     const aggregationPipeline = [
         {
             $facet: {
@@ -54,6 +55,7 @@ const getDashboardstats = asynchandler(async (req, res) => {
     const expense = result.totalExpense.length > 0 ? result.totalExpense[0].amount : 0;
     const netBalance = income - expense;
 
+    // ready for the frontend!
     const formattedStats = {
         totalIncome: income,
         totalExpense: expense,

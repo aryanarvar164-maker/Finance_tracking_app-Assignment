@@ -35,6 +35,7 @@ const changeUserstatus = asynchandler(async (req, res) => {
     const { userId, status } = req.body; // status is an boolean
 
     if (userId === undefined || status === undefined) {
+        // can't proceed without these
         throw new ApiError(400, "user or status are requird");
     }
 

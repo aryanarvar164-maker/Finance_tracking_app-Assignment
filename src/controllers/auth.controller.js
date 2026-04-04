@@ -22,7 +22,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = asynchandler(async (req, res) => {
     const { fullName, email, username, password } = req.body;
 
-    if ([fullName, email, username, password].some((field) => field?.trim() === "")) {
+    if ([fullName, email, username, password].some((field) => !field || field.trim() === "")) {
         throw new ApiError(400, "All fields are required ");
     }
 
@@ -31,13 +31,17 @@ const registerUser = asynchandler(async (req, res) => {
     });
 
     if (existeduser) {
-        throw new ApiError(409, "email or username already exist");
+        throw new ApiError(400, "email or username already exist");
     }
 
 
-    let defaultrole = await Role.findOne({ name: 'viewer' });
+    const isFirstUser = (await User.countDocuments()) === 0;
+    const roleName = isFirstUser ? 'admin' : 'viewer';
+
+    let defaultrole = await Role.findOne({ name: roleName });
     if (!defaultrole) {
-        throw new ApiError(500, "Roles are not seeded yet. Please seed roles first.");
+        
+        throw new ApiError(500, `Role '${roleName}' not found. Please seed roles first.`);
     }
 
     const user = await User.create({
@@ -90,7 +94,7 @@ const loginUser = asynchandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
+        secure: process.env.NODE_ENV === 'production' // secure only in prod
     }
 
     return res

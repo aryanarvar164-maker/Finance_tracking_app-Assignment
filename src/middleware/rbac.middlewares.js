@@ -26,7 +26,7 @@ const checkPermission = (permission) => {
         }
 
         if (req.role[permission] !== true) {
-            return next(new ApiError(403, "req required"));
+            return next(new ApiError(403, "permission denied"));
         }
 
         next();

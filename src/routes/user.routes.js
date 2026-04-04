@@ -11,6 +11,6 @@ router.use(attachRoles);
 
 router.route("/assign-roles").patch(checkPermission('can_manage_user'), assignRole);
 
-router.route("/get-status").patch(checkPermission('can_manage_user'), changeUserstatus);
+router.route("/change-status").patch(checkPermission('can_manage_user'), changeUserstatus);
 
 export default router;
